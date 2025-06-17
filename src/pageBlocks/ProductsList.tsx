@@ -22,7 +22,6 @@ export default function ProductsList() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState<number>(1)
   const [totalItems, setTotalItems] = useState<number>(0)
-  const [totalPages, setTotalPages] = useState<number>(0)
   const [searchValue, setSearchValue] = useState<string>('')
   const searchRef = useRef<HTMLInputElement>(null)
   const [isOpenDropdown, setIsOpenDropdown] = useState<boolean>(false)
@@ -55,7 +54,6 @@ export default function ProductsList() {
 
         setFilteredProducts(items)
         setTotalItems(total)
-        setTotalPages(Math.ceil(total / PER_PAGE_COUNT))
 
         if (items.length === 0) {
           setError('No products found')
@@ -66,7 +64,6 @@ export default function ProductsList() {
 
         setFilteredProducts([])
         setTotalItems(0)
-        setTotalPages(0)
       } finally {
         setLoading(false)
       }
