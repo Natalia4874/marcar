@@ -1,0 +1,22 @@
+.pagination {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pagination__container {
+  padding: 0;
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .pagination__container {
+    margin: 8px 0;
+    gap: 8px;
+  }
+}

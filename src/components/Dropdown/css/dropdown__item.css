@@ -1,0 +1,31 @@
+.dropdown__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.dropdown__item:hover {
+  cursor: pointer;
+  background-color: var(--color-surface-primary-hover);
+}
+
+.dropdown__item-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown__item-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.dropdown__item-label {
+  flex-grow: 1;
+}
