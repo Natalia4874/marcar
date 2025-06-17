@@ -43,11 +43,12 @@ const Dropdown: React.FC<iDropdownProps> = ({
         className: isOpen ? animationOpen : animationClose
       }))
     }
-  }, [isOpen])
+  }, [animationClose, animationOpen, isOpen])
 
   // Close dropdown by click outside
   useEffect(() => {
     // Add a handler to keep track of the click target.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function onClickWindow(event: any) {
       const dropdownElement = dropdownRef.current
 

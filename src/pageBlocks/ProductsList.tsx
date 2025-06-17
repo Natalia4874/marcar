@@ -58,8 +58,10 @@ export default function ProductsList() {
         if (items.length === 0) {
           setError('No products found')
         }
-      } catch (error) {
-        setError(error.message)
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error occurred'
+        setError(errorMessage)
         console.error('Error fetching data:', error)
 
         setFilteredProducts([])
