@@ -34,13 +34,15 @@ export default function ProductsList() {
         setLoading(true)
         setError(null)
 
-        let url = `https://plex-parser.ru-rating.ru/cars?_limit=${PER_PAGE_COUNT}&_page=${page}`
+        const url = new URL('/api/cars', window.location.origin)
+        url.searchParams.append('_limit', PER_PAGE_COUNT.toString())
+        url.searchParams.append('_page', page.toString())
 
         if (searchQuery) {
-          url += `&q=${encodeURIComponent(searchQuery)}`
+          url.searchParams.append('q', searchQuery)
         }
 
-        const response = await fetch(url)
+        const response = await fetch(url.toString())
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -72,59 +74,75 @@ export default function ProductsList() {
     [page]
   )
 
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value)
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearchValue(value)
 
-    if (searchTimeout) {
-      clearTimeout(searchTimeout)
-    }
+      if (searchTimeout) {
+        clearTimeout(searchTimeout)
+      }
 
-    setSearchTimeout(
-      setTimeout(() => {
-        getData(value)
-      }, 500)
-    )
-  }
+      setSearchTimeout(
+        setTimeout(() => {
+          setPage(1)
+          getData(value)
+        }, 500)
+      )
+    },
+    [getData, searchTimeout]
+  )
 
-  const onClickClean = () => {
+  const onClickClean = useCallback(() => {
     setSearchValue('')
+    setPage(1)
     getData()
-  }
+  }, [getData])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      getData(searchValue)
-    }
-  }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        getData(searchValue)
+      }
+    },
+    [getData, searchValue]
+  )
 
-  const handlePageChange = ({ selected }: { selected: number }) => {
+  const handlePageChange = useCallback(({ selected }: { selected: number }) => {
     setPage(selected + 1)
-  }
+  }, [])
 
-  const handleSort = (type: 'asc' | 'desc' | 'none') => {
-    setIsOpenDropdown(false)
+  const handleSort = useCallback(
+    (type: 'asc' | 'desc' | 'none') => {
+      setIsOpenDropdown(false)
 
-    const sortedProducts = [...filteredProducts]
-    if (type === 'none') {
-      getData(searchValue)
-      return
-    }
+      if (type === 'none') {
+        getData(searchValue)
+        return
+      }
 
-    sortedProducts.sort((a, b) => {
-      const priceA = a.price || 0
-      const priceB = b.price || 0
-      return type === 'asc' ? priceA - priceB : priceB - priceA
-    })
-
-    setFilteredProducts(sortedProducts)
-  }
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => {
+          const priceA = a.price || 0
+          const priceB = b.price || 0
+          return type === 'asc' ? priceA - priceB : priceB - priceA
+        })
+      )
+    },
+    [getData, searchValue]
+  )
 
   useEffect(() => {
+    const controller = new AbortController()
+
     getData(searchValue)
-  }, [page, getData, searchValue])
+
+    return () => {
+      controller.abort()
+    }
+  }, [page, searchValue, getData])
 
   if (error) {
-    return <div>Something went wrong</div>
+    return <div>Something went wrong: {error}</div>
   }
 
   return (
